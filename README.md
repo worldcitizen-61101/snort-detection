@@ -3,8 +3,6 @@ A list of 10 Snort personalised rules.
 Just add the rules to your '/etc/snort/snort.conf' in the "7) Customize your rule set" step (In Debian, line 578).
 
 
-# snort-detection rules by Daniel Santos
-
 # Rule 1: Detect SSH brute force attempts
 # Rule 2: Detect SQL injection attempts
 # Rule 3: Detect DNS tunneling attempts
