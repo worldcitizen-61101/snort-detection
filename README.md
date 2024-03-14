@@ -1,2 +1,35 @@
 # snort-detection
 A list of 10 Snort personalised rules
+
+Just add the following to your /etc/snort/snort.conf in the "7-Set your own rule set" block.
+# Detection rules by Daniel Santos
+
+# Rule 1: Detect SSH brute force attempts
+alert tcp any any -> $HOME_NET 22 (msg:"SSH Brute Force Attempt"; flow:to_server,established; content:"SSH-"; depth:5; detection_filter: track by_src, count 5, seconds 60; sid:100001;)
+
+# Rule 2: Detect SQL injection attempts
+alert tcp $EXTERNAL_NET any -> $HTTP_SERVERS $HTTP_PORTS (msg:"SQL Injection Attempt"; flow:to_server,established; content:"SELECT"; nocase; http_uri; content:"UNION"; nocase; http_uri; sid:100002;)
+
+# Rule 3: Detect DNS tunneling attempts
+alert udp $HOME_NET any -> any 53 (msg:"DNS Tunneling Detected"; content:"|00 00 FF|"; offset:12; depth:3; sid:100004;)
+
+# Rule 4: Detect FTP brute force attempts
+alert tcp $EXTERNAL_NET any -> $FTP_SERVERS 21 (msg:"FTP Brute Force Attempt"; flow:to_server,established; content:"530 Login incorrect"; sid:100005;)
+
+# Rule 5: Detect SMB reconnaissance activity
+alert tcp $EXTERNAL_NET any -> $HOME_NET 445 (msg:"SMB Reconnaissance Activity"; flow:to_server,established; content:"|FF|SMB"; offset:4; depth:4; sid:100006;)
+
+# Rule 6: Detect port scanning activity
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"Port Scanning Detected"; flags:S; detection_filter: track by_src, count 5, seconds 60; sid:100008;)
+
+# Rule 7: Detect suspicious PowerShell usage
+alert tcp $HOME_NET any -> $EXTERNAL_NET $HTTP_PORTS (msg:"Suspicious PowerShell Usage"; flow:to_server,established; content:"powershell"; http_header; sid:100009;)
+
+# Rule 8: Detect DNS zone transfer attempts
+alert udp $EXTERNAL_NET any -> $HOME_NET 53 (msg:"DNS Zone Transfer Attempt"; flow:to_server; content:"|00 06|"; depth:2; content:"|00 00 10|"; distance:2; within:3; sid:100010;)
+
+# Rule 9: Detect lateral movement attempts
+alert tcp any any -> $HOME_NET any (msg:"Lateral Movement Attempt"; flow:to_server,established; content:"NET USE"; content:"/USER"; content:"/PASSWORD"; sid:100100;)
+
+# Rule 10: Detect HTTP traffic from ransomware
+alert tcp $HOME_NET any -> any $HTTP_PORTS (msg:"Potential Ransomware C&C Communication"; flow:to_server,established; content:"key_transfer"; content:"encrypted_files"; http_method; sid:100101;)
