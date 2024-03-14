@@ -3,7 +3,7 @@ A list of 10 Snort personalised rules.
 Just add the following to your '/etc/snort/snort.conf' in the "7) Customize your rule set" step (In Debian, line 578).
 
 
-# Detection rules by Daniel Santos
+# Detection rules by 61101
 
 alert tcp any any -> $HOME_NET 22 (msg:"SSH Brute Force Attempt"; flow:to_server,established; content:"SSH-"; depth:5; detection_filter: track by_src, count 5, seconds 60; sid:100001;)
 
